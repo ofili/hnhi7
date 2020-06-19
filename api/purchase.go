@@ -1,32 +1,55 @@
 package api
 
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"strconv"
+)
 
+// Client ...
+type Client struct {
+	Code string
+	Amount int64
+	Phonenumber string
+	SecretKey string
+}
+
+const secretKey = "hfucj5jatq8h"
+var url = "https://sandbox.wallets.africa/bills/airtime/purchase"
+
+// Purchase ...
 func Purchase(w http.ResponseWriter, r *http.Request,code, number, amt string) {
-	//fmt.Println("From form",amt)
-	parseamt,_ := strconv.ParseInt(amt, 10, 64)
-	//fmt.Println(parseamt)
-	NewClient := &ClientRequest {
+	
+	cost,_ := strconv.ParseInt(amt, 10, 64)
+	
+	NewClient := &Client {
 		Code: code,
-		Amount: parseamt,
+		Amount: cost,
 		Phonenumber: number,
 		SecretKey: secretKey,
 	}
-	const publicToken = "uvjqzm5xl6bw"  // Todo: to change
+
+	// Token
+	const publicToken = "uvjqzm5xl6bw"
  	var bearer = "Bearer " + publicToken
 	
-	requestBody, err := json.Marshal(NewClient); if err!= nil{
+	 // Body of response
+	m, err := json.Marshal(NewClient); if err!= nil{
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
   client := &http.Client {
   }
-  req, err := http.NewRequest("POST", url, bytes.NewBuffer(requestBody))
-
+  req, err := http.NewRequest("POST", url, bytes.NewBuffer(m))
   if err != nil {
 	  w.WriteHeader(http.StatusInternalServerError)
     fmt.Println(err)
   }
+
   req.Header.Add("Content-Type", "application/json")
   req.Header.Add("Authorization", bearer)
 
@@ -37,22 +60,18 @@ func Purchase(w http.ResponseWriter, r *http.Request,code, number, amt string) {
 
   defer res.Body.Close()
 
-  responsebody := response{}
-  json.NewDecoder(res.Body).Decode(&responsebody)
+  rBody := Responses{}
+  json.NewDecoder(res.Body).Decode(&rBody)
 
   if res.Status == "200 OK" {
-	http.Redirect(w, r, "/success", http.StatusFound)  // popup message showing success
+	  // Show popup message (successful)
+	http.Redirect(w, r, "/successful", http.StatusFound)
   }else {
 	  w.WriteHeader(http.StatusBadRequest)
-	  fmt.Fprintln(w, responsebody.Message)	// popup message showing error message
+	  // Show popup message (fail)
+	  fmt.Fprintln(w, rBody.Message)
   }
 
-  
-  //fmt.Println(responsebody.Message)
-
-  //body, err := ioutil.ReadAll(res.Body)
-
-  //fmt.Println("Response body:",string(body))
-  //fmt.Println(string(body))
+// Print status
   fmt.Println("response Status:", res.Status)
 }
