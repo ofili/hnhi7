@@ -29,7 +29,7 @@ func main () {
 
 	// 
 	router.HandleFunc("/success", api.Pages).Methods("GET") 
-	router.PathPrefix("/st/").Handler(http.StripPrefix("/resources/", http.FileServer(http.Dir("./resources/"))))
+	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
 	router.HandleFunc("/purchase", api.NotImplemented).Methods("GET")
 	router.HandleFunc("/transact", api.Post).Methods("POST")
 
