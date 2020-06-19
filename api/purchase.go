@@ -65,7 +65,7 @@ func Purchase(w http.ResponseWriter, r *http.Request,code, number, amt string) {
 
   if res.Status == "200 OK" {
 	  // Show popup message (successful)
-	http.Redirect(w, r, "/successful", http.StatusFound)
+	http.Redirect(w, r, "/success", http.StatusFound)
   }else {
 	  w.WriteHeader(http.StatusBadRequest)
 	  // Show popup message (fail)
