@@ -4,6 +4,7 @@ import (
 	"net/http"
 )
 
+// Post ...
 func Post(w http.ResponseWriter, r *http.Request) {
 	code := r.FormValue("network")
 	phoneNumber := r.FormValue("number")
