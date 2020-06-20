@@ -8,18 +8,20 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 )
 
 
-
+func getPort() string {
+	p := os.Getenv("PORT")
+	if p != "" {
+		return ":" + p
+	}
+	return "5000"
+}
 
 func main () {
 	
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = strconv.Itoa(5000)
-	}
+	port := getPort()
 
 	// Route definition
 	router := mux.NewRouter()
